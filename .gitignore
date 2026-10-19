@@ -1,0 +1,7 @@
+DECISIONS.md
+TRAIN.md
+.venv/
+__pycache__/
+.DS_Store
+data/
+run/
