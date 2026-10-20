@@ -1,5 +1,7 @@
 from dataclasses import asdict, dataclass
 
+import torch
+
 
 @dataclass
 class GptConfig:
@@ -18,7 +20,7 @@ class GptConfig:
 @dataclass
 class TrainConfig:
     batch_size: int = 32
-    steps: int = 3000
+    steps: int = 2500
     lr: float = 1e-3
     min_lr_ratio: float = 0.1
     warmup: int = 100
@@ -29,5 +31,9 @@ class TrainConfig:
     seed: int = 1337
 
 
-DEFAULT_MODEL = GptConfig()
-DEFAULT_TRAIN = TrainConfig()
+def pick_device():
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
