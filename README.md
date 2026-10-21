@@ -4,6 +4,30 @@ A small GPT2 style language model implemented from scratch in PyTorch. Everythin
 
 Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.pt holds that checkpoint. The full log lives in TRAIN.md.
 
+## Plots
+
+The figures below come from the completed run. Regenerate them with `uv run python plots.py`.
+
+Training and validation loss. The dashed line marks the best checkpoint.
+
+![training and validation loss](plots/loss.png)
+
+Validation perplexity on a log scale. The same best checkpoint is marked.
+
+![validation perplexity](plots/perplexity.png)
+
+Learning rate across the run: linear warmup for 100 steps, then cosine decay.
+
+![learning rate schedule](plots/learning_rate.png)
+
+Gradient norm, with a 25 point rolling mean.
+
+![gradient norm](plots/gradient_norm.png)
+
+Throughput. The sharp dips are measurement windows that included an evaluation, not slower training.
+
+![training throughput](plots/throughput.png)
+
 ## Highlights
 
 * 11,139,072 parameters in a 6 layer GPT2 style decoder
@@ -164,30 +188,6 @@ Best checkpoint: step 750 with training loss 2.7700, validation loss 4.0174, val
 Final step: training loss 0.2399, validation loss 6.0090, validation perplexity 407.09.
 
 For reference, a uniform guess over 1024 tokens gives loss ln(1024) = 6.93.
-
-## Plots
-
-The figures below come from the completed run. Regenerate them with `uv run python plots.py`.
-
-Training and validation loss. The dashed line marks the best checkpoint.
-
-![training and validation loss](plots/loss.png)
-
-Validation perplexity on a log scale. The same best checkpoint is marked.
-
-![validation perplexity](plots/perplexity.png)
-
-Learning rate across the run: linear warmup for 100 steps, then cosine decay.
-
-![learning rate schedule](plots/learning_rate.png)
-
-Gradient norm, with a 25 point rolling mean.
-
-![gradient norm](plots/gradient_norm.png)
-
-Throughput. The sharp dips are measurement windows that included an evaluation, not slower training.
-
-![training throughput](plots/throughput.png)
 
 ## Samples
 
