@@ -165,6 +165,30 @@ Final step: training loss 0.2399, validation loss 6.0090, validation perplexity 
 
 For reference, a uniform guess over 1024 tokens gives loss ln(1024) = 6.93.
 
+## Plots
+
+The figures below come from the completed run. Regenerate them with `uv run python plots.py`.
+
+Training and validation loss. The dashed line marks the best checkpoint.
+
+![training and validation loss](plots/loss.png)
+
+Validation perplexity on a log scale. The same best checkpoint is marked.
+
+![validation perplexity](plots/perplexity.png)
+
+Learning rate across the run: linear warmup for 100 steps, then cosine decay.
+
+![learning rate schedule](plots/learning_rate.png)
+
+Gradient norm, with a 25 point rolling mean.
+
+![gradient norm](plots/gradient_norm.png)
+
+Throughput. The sharp dips are measurement windows that included an evaluation, not slower training.
+
+![training throughput](plots/throughput.png)
+
 ## Samples
 
 Untrained model at step 0:
@@ -271,6 +295,7 @@ The model card shows the parameter count, architecture, checkpoint step, validat
 * prepare.py: downloads the corpus, trains the tokenizer, writes token files
 * train.py: training loop with warmup, cosine decay, evaluation, sampling, checkpoints, and resume
 * generate.py: loads a checkpoint and samples text
+* plots.py: builds the training plots in plots/
 * upload.py: packages a checkpoint and publishes it to Hugging Face
 * TRAIN.md: local training log, not tracked by git
 * DECISIONS.md: local design notes, not tracked by git
