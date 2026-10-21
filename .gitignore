@@ -2,7 +2,9 @@
 __pycache__/
 .DS_Store
 data/
-run/
+run/*
+!run/history.json
+!run/log.txt
 DECISIONS.md
 TRAIN.md
 upload.py
