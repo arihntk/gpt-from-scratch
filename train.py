@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 
 import torch
+from safetensors.torch import save_model
 
 from config import GptConfig, TrainConfig, pick_device
 from dataset import Loader
@@ -35,16 +36,32 @@ def lr_at(step, tc):
 
 
 def save(model, path, step, data_dir, opt=None, **extra):
-    body = {
-        "model": {k: v.cpu() for k, v in model.state_dict().items()},
+    path = Path(path)
+    weights = {k: v.detach().cpu() for k, v in model.state_dict().items()}
+    meta = {
         "config": model.cfg.dict(),
         "step": step,
         "data_dir": data_dir,
+        "params": model.n_params,
+        "torch": str(torch.__version__),
         **extra,
     }
+    body = {"model": weights, **meta}
     if opt is not None:
         body["opt"] = opt.state_dict()
     torch.save(body, path)
+    cpu = Gpt(model.cfg)
+    cpu.load_state_dict(weights)
+    save_model(cpu, path.with_suffix(".safetensors"))
+    path.with_suffix(".json").write_text(json.dumps(meta, indent=2))
+
+
+def sample_text(model, tok, n):
+    dev = next(model.parameters()).device
+    ids = torch.tensor([tok.encode("\n")], dtype=torch.long, device=dev)
+    out = model.generate(ids, n, temperature=0.8, top_k=64)
+    model.train()
+    return tok.decode(out[0].tolist())
 
 
 def flags():
@@ -104,16 +121,21 @@ def main():
 
     start = 0
     best = float("inf")
+    history = []
+    resumed = False
     if args.resume and (Path(args.out_dir) / "last.pt").exists():
-        st = torch.load(Path(args.out_dir) / "last.pt", map_location=dev, weights_only=False)
+        st = torch.load(Path(args.out_dir) / "last.pt", map_location=dev, weights_only=True)
         model.load_state_dict(st["model"])
         opt.load_state_dict(st["opt"])
         start = st["step"] + 1
         best = st["best_val"]
+        resumed = True
         log(f"resumed at step {start}, best val {best:.4f}")
     if start >= tc.steps:
         log(f"nothing to train: start {start} >= steps {tc.steps}")
         return
+    if resumed and (Path(args.out_dir) / "history.json").exists():
+        history = json.loads((Path(args.out_dir) / "history.json").read_text())
 
     log(f"tokens per step: {tc.batch_size * mc.block_size:,} | steps: {tc.steps}")
 
@@ -128,7 +150,6 @@ def main():
         model.train()
         return total / iters
 
-    history = []
     timer = time.time()
     recent = 0
     for step in range(start, tc.steps):
@@ -163,15 +184,18 @@ def main():
                 f" | val {va:.4f} (ppl {math.exp(va):.2f})"
             )
             history.append({"step": step, "train": tr, "val": va})
-            if va < best:
+            improved = va < best
+            if improved:
                 best = va
                 save(model, Path(args.out_dir) / "best.pt", step, args.data_dir, val_loss=va)
+                text = sample_text(model, tok, args.sample_tokens)
+                (Path(args.out_dir) / "best_sample.txt").write_text(
+                    f"step {step} | val {va:.4f}\n\n{text}\n"
+                )
                 log(f"saved best.pt at step {step} with val {va:.4f}")
-            if step == 0 or step == tc.steps - 1:
-                ids = torch.tensor([tok.encode("\n")], dtype=torch.long, device=dev)
-                out = model.generate(ids, args.sample_tokens, temperature=0.8, top_k=64)
-                model.train()
-                log("sample:\n" + tok.decode(out[0].tolist()))
+                log("sample @ best:\n" + text)
+            if step == tc.steps - 1 and not improved:
+                log("sample:\n" + sample_text(model, tok, args.sample_tokens))
 
     save(
         model,
