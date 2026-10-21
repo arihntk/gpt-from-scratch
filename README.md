@@ -49,7 +49,7 @@ uv run python generate.py --prompt "ROMEO:"
 
 prepare.py downloads Tiny Shakespeare, trains the tokenizer, and writes the train and validation files. train.py follows the default plan of 2500 steps.
 
-To skip training, download `best.pt` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0) and place it at `run/best.pt`. Then run `generate.py`.
+To skip training, download `best.safetensors` and `best.json` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0) and place them in `run/`. Then run `generate.py`. The release also includes `best.pt` as a PyTorch fallback.
 
 `generate.py` loads `run/best.safetensors` when it exists, otherwise `run/best.pt`.
 
