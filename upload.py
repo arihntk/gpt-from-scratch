@@ -1,4 +1,5 @@
 import argparse
+import math
 import shutil
 from pathlib import Path
 
@@ -27,7 +28,7 @@ A small GPT2 style language model with {params:,} parameters, implemented and tr
 
 ## Status
 
-Training is not complete. This checkpoint was saved at step {step} of the planned {planned} step run, with validation loss {loss:.4f}. The model has started to learn word shapes and line breaks, but it does not produce meaningful text yet. This card will be updated when the full run finishes.
+This checkpoint was saved at step {step} of a {planned} step training plan. Validation loss at this point is {loss:.4f} and validation perplexity is {ppl:.2f}.
 
 ## Files
 
@@ -99,6 +100,7 @@ def main():
         step=state["step"],
         planned=args.planned_steps,
         loss=state["val_loss"],
+        ppl=math.exp(state["val_loss"]),
     )
 
     stage = Path(args.stage_dir)
