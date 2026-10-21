@@ -124,7 +124,7 @@ Measured on the M4 Air for the complete run:
 * evaluation cost: about 4 to 5 s per eval, 51 evals in total
 * average over the whole run: 0.565 s per step including evaluations and sampling
 
-The run finished all 2500 steps and wrote best.safetensors and best.pt at the lowest validation loss, last.safetensors and last.pt at the final step, and the eval history to history.json.
+The run finished all 2500 steps and wrote best.pt at the lowest validation loss, last.pt at the final step, and the eval history to history.json. The best checkpoint is also stored as best.safetensors with best.json.
 
 ## Loss curve
 
