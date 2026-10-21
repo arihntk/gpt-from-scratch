@@ -34,7 +34,7 @@ Throughput. The sharp dips are measurement windows that included an evaluation, 
 * byte level BPE tokenizer with a 1024 token vocabulary trained on the corpus
 * best validation loss 4.0174, validation perplexity 55.56, at step 750
 * trained on a MacBook Air M4 with 16 GB memory in about 24 minutes
-* complete pipeline: prepare, train, sample, and publish to Hugging Face
+* complete pipeline: prepare, train, and sample
 
 ## Quick start
 
@@ -245,47 +245,6 @@ KING RICHARD III:
 
 The best checkpoint produces Shakespeare style dialogue with character names, line breaks, and mostly word shaped text. It still invents words and breaks grammar, and it is not a general purpose model. The final checkpoint has lower training loss but higher validation loss, so it likely repeats parts of the training data.
 
-## Hugging Face upload
-
-upload.py packages a checkpoint, the tokenizer, and the inference code, generates a model card, and pushes the result to the Hugging Face Hub.
-
-Log in once:
-
-```
-uv run hf auth login
-```
-
-Upload a checkpoint:
-
-```
-uv run python upload.py --repo-id yourname/gpt_shakespeare
-```
-
-The default checkpoint is run/best.pt, the step 750 model with the lowest validation loss. To publish the final checkpoint instead, pass `--ckpt run/last.pt`.
-
-Options:
-
-* `--ckpt`: path to the checkpoint, default run/best.pt
-* `--data-dir`: directory that contains tok.json, default data/shakespeare
-* `--stage-dir`: local folder for the upload package, default run/hf
-* `--repo-id`: full repository name, required
-* `--private`: creates a private repository
-* `--token`: access token, otherwise the saved login or HF_TOKEN is used
-* `--dry-run`: builds the package without uploading
-* `--planned-steps`: step count shown on the model card, default 2500
-
-Uploaded files:
-
-* best.pt
-* tok.json
-* config.py
-* model.py
-* tokenizer.py
-* generate.py
-* README.md, generated model card
-
-The model card shows the parameter count, architecture, checkpoint step, validation loss, and usage commands. The repository is a custom implementation and not a transformers model, so it must be loaded with the included code and not with AutoModelForCausalLM.
-
 ## Files
 
 * config.py: model and training settings, device selection
@@ -296,7 +255,6 @@ The model card shows the parameter count, architecture, checkpoint step, validat
 * train.py: training loop with warmup, cosine decay, evaluation, sampling, checkpoints, and resume
 * generate.py: loads a checkpoint and samples text
 * plots.py: builds the training plots in plots/
-* upload.py: packages a checkpoint and publishes it to Hugging Face
 * TRAIN.md: local training log, not tracked by git
 * DECISIONS.md: local design notes, not tracked by git
 
