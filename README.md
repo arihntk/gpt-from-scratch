@@ -1,5 +1,7 @@
 # GPT-from-scratch
 
+[Model on Hugging Face](https://huggingface.co/arihntk/gpt-from-scratch)
+
 A small GPT2 style language model implemented from scratch in PyTorch. Everything is in this repository: the byte level BPE tokenizer, the transformer, the training loop, and the sampling scripts. No pretrained weights, no tokenizer downloads, and no model frameworks beyond PyTorch and NumPy.
 
 Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.pt holds that checkpoint.
