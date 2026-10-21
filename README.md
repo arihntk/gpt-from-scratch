@@ -4,7 +4,7 @@
 
 A small GPT2 style language model implemented from scratch in PyTorch. Everything is in this repository: the byte level BPE tokenizer, the transformer, the training loop, and the sampling scripts. No pretrained weights, no tokenizer downloads, and no model frameworks beyond PyTorch and NumPy.
 
-Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.pt holds that checkpoint.
+Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.safetensors and run/best.pt hold that checkpoint.
 
 ## Plots
 
@@ -50,6 +50,8 @@ uv run python generate.py --prompt "ROMEO:"
 prepare.py downloads Tiny Shakespeare, trains the tokenizer, and writes the train and validation files. train.py follows the default plan of 2500 steps.
 
 To skip training, download `best.pt` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0) and place it at `run/best.pt`. Then run `generate.py`.
+
+`generate.py` loads `run/best.safetensors` when it exists, otherwise `run/best.pt`.
 
 ## Model
 
@@ -122,11 +124,11 @@ Measured on the M4 Air for the complete run:
 * evaluation cost: about 4 to 5 s per eval, 51 evals in total
 * average over the whole run: 0.565 s per step including evaluations and sampling
 
-The run finished all 2500 steps and wrote best.pt at the lowest validation loss, last.pt at the final step, and the eval history to history.json.
+The run finished all 2500 steps and wrote best.safetensors and best.pt at the lowest validation loss, last.safetensors and last.pt at the final step, and the eval history to history.json.
 
 ## Loss curve
 
-Validation loss reached its lowest value 4.0174 at step 750, then rose while training loss kept falling. This is overfitting: after about 15 passes the model starts to memorize the 399,354 token training split. run/best.pt holds the step 750 checkpoint.
+Validation loss reached its lowest value 4.0174 at step 750, then rose while training loss kept falling. This is overfitting: after about 15 passes the model starts to memorize the 399,354 token training split. run/best.safetensors and run/best.pt hold the step 750 checkpoint.
 
 Evaluation loss for every 50 steps:
 
@@ -255,7 +257,9 @@ The best checkpoint produces Shakespeare style dialogue with character names, li
 * dataset.py: memory mapped train and validation batches
 * prepare.py: downloads the corpus, trains the tokenizer, writes token files
 * train.py: training loop with warmup, cosine decay, evaluation, sampling, checkpoints, and resume
-* generate.py: loads a checkpoint and samples text
+* generate.py: loads a safetensors or PyTorch checkpoint and samples text
+* checkpoints: run/best.safetensors and run/best.json, with run/best.pt as a fallback
+* LICENSE: MIT license
 * plots.py: builds the training plots in plots/
 * run/history.json: evaluation history for the completed run
 * run/log.txt: full training log
@@ -267,9 +271,13 @@ The best checkpoint produces Shakespeare style dialogue with character names, li
 * The validation split has 44,373 tokens, so validation loss moves by a few hundredths between evaluations.
 * An interrupted run cannot resume unless last.pt was written at the end of an earlier run.
 * The implementation favors clarity over speed. There is no torch.compile, mixed precision, or distributed training.
-* Checkpoints are not part of the git repository. They are written to run/ and ignored, so a fresh clone needs its own training run.
+* Checkpoints are not committed to git. The step 750 checkpoint is attached to the v0.1.0 release and hosted on Hugging Face.
 
 ## Credits
 
 Data: Tiny Shakespeare from Andrej Karpathy's char rnn repository. The play text is public domain.
 Architecture ideas follow GPT2 and the nanoGPT teaching project.
+
+## License
+
+MIT. The Tiny Shakespeare text is public domain.
