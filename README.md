@@ -2,11 +2,9 @@
 
 A small GPT2 style language model implemented from scratch in PyTorch. Everything is in this repository: the byte level BPE tokenizer, the transformer, the training loop, and the sampling scripts. No pretrained weights, no tokenizer downloads, and no model frameworks beyond PyTorch and NumPy.
 
-Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.pt holds that checkpoint. The full log lives in TRAIN.md.
+Training status: complete. The model finished all 2500 steps in about 24 minutes. Validation loss was lowest at step 750, so run/best.pt holds that checkpoint.
 
 ## Plots
-
-The figures below come from the completed run. Regenerate them with `uv run python plots.py`.
 
 Training and validation loss. The dashed line marks the best checkpoint.
 
@@ -48,6 +46,8 @@ uv run python generate.py --prompt "ROMEO:"
 ```
 
 prepare.py downloads Tiny Shakespeare, trains the tokenizer, and writes the train and validation files. train.py follows the default plan of 2500 steps.
+
+To skip training, download `best.pt` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0) and place it at `run/best.pt`. Then run `generate.py`.
 
 ## Model
 
@@ -255,6 +255,8 @@ The best checkpoint produces Shakespeare style dialogue with character names, li
 * train.py: training loop with warmup, cosine decay, evaluation, sampling, checkpoints, and resume
 * generate.py: loads a checkpoint and samples text
 * plots.py: builds the training plots in plots/
+* run/history.json: evaluation history for the completed run
+* run/log.txt: full training log
 * TRAIN.md: local training log, not tracked by git
 * DECISIONS.md: local design notes, not tracked by git
 
