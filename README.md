@@ -1,4 +1,4 @@
-# gpt
+# GPT-from-scratch
 
 A small GPT2 style language model implemented from scratch in PyTorch. Everything is in this repository: the byte level BPE tokenizer, the transformer, the training loop, and the sampling scripts. No pretrained weights, no tokenizer downloads, and no model frameworks beyond PyTorch and NumPy.
 
@@ -113,7 +113,7 @@ The output head shares its weights with the token embeddings, so the unique para
 
 Measured on the M4 Air for the complete run:
 
-* total wall clock time: 1413 s, about 23.5 minutes
+* total time: 1413 s, about 23.5 minutes
 * pure training step time: 0.42 to 0.47 s per step
 * throughput: about 17,000 to 19,500 tokens per second
 * first step: 1 to 3 s while Metal kernels compile
@@ -257,8 +257,6 @@ The best checkpoint produces Shakespeare style dialogue with character names, li
 * plots.py: builds the training plots in plots/
 * run/history.json: evaluation history for the completed run
 * run/log.txt: full training log
-* TRAIN.md: local training log, not tracked by git
-* DECISIONS.md: local design notes, not tracked by git
 
 ## Limitations
 
