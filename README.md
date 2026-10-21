@@ -49,7 +49,7 @@ uv run python generate.py --prompt "ROMEO:"
 
 prepare.py downloads Tiny Shakespeare, trains the tokenizer, and writes the train and validation files. train.py follows the default plan of 2500 steps.
 
-To skip training, download `best.safetensors` and `best.json` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0) and place them in `run/`. Then run `generate.py`. The release also includes `best.pt` as a PyTorch fallback.
+To skip training, download `best.safetensors`, `best.json`, and `tok.json` from the [v0.1.0 release](https://github.com/arihntk/gpt-from-scratch/releases/tag/v0.1.0). Place the checkpoint files in `run/` and `tok.json` in `data/shakespeare/`. Then run `generate.py`. The release also includes `best.pt` as a PyTorch fallback.
 
 `generate.py` loads `run/best.safetensors` when it exists, otherwise `run/best.pt`.
 
@@ -77,7 +77,7 @@ Parameter breakdown:
 * final LayerNorm: 768
 * total: 11,139,072
 
-The output head shares its weights with the token embeddings, so the unique parameter count is 11,139,072. A float32 checkpoint is about 46 MB.
+The output head shares its weights with the token embeddings, so the unique parameter count is 11,139,072. A float32 checkpoint is about 45 MB.
 
 ## Data
 
@@ -96,7 +96,7 @@ The output head shares its weights with the token embeddings, so the unique para
 * system: macOS on arm64
 * Python: 3.14
 * PyTorch: 2.14.1
-* NumPy: 2.5.4
+* NumPy: 2.4.6 in the current lock; the recorded run used 2.5.4
 * compute backend: MPS, Apple Metal
 * memory use: well under 1 GB for the model, optimizer, and activations
 
@@ -109,8 +109,8 @@ The output head shares its weights with the token embeddings, so the unique para
 * batch: 32 sequences of 256 tokens, so 8192 tokens per step
 * steps: 2500 completed, about 51 passes over the training data
 * evaluation: every 50 steps over 20 batches per split
-* sampling: at step 0 and at the final step, temperature 0.8 and top k 64
-* checkpoints: best validation loss and last state
+* sampling: whenever a new best validation loss is reached and at the final step, temperature 0.8 and top k 64
+* checkpoints: safetensors and PyTorch files for the best validation loss and the last state
 * seed: 1337
 
 ## Training time
